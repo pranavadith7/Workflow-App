@@ -48,13 +48,14 @@ document.getElementById('updateCardButton').addEventListener('click', async func
             const selectedEmail = dropdownMenuButton.textContent;
 
             await addDoc(collection(db, 'cards'), {
-                badge: badgeNumber,
+                level: badgeNumber,
                 title: cardTitle,
                 message: cardMessage,
                 email: selectedEmail,
                 approved: false,
             });
         }
+        alert("Data sent for approval");
         console.log('All cards updated in Firestore');
     } catch (e) {
         console.error('Error updating cards: ', e);
