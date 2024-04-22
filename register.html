@@ -1,13 +1,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login Page</title>
+    <title>Workflow App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/register.css">
     <script type="module" src="js/login.js"></script>
 </head>
-
 <body style="background-image: url('images/bg.jpg');">
     <!-- Main Content -->
     <div class="container-fluid">
@@ -21,7 +20,7 @@
             <div class="col-md-8 col-xs-12 col-sm-12 login_form ">
                 <div class="container-fluid">
                     <div class="row">
-                        <h2 class="login">Login</h2>
+                        <h2 class="register">Register</h2>
                     </div>
                     <div class="row">
                         <form control="" class="form-group">
@@ -33,12 +32,16 @@
                                     placeholder="Password" required>
                             </div>
                             <div class="row">
+                                <input type="password" name="confirm" id="confirm" class="form__input"
+                                    placeholder="Confirm Password" required>
+                            </div>
+                            <div class="row">
                                 <input type="submit" value="Submit" class="btn">
                             </div>
                         </form>
                     </div>
                     <div class="row">
-                        <p>Don't have an account? <a href="register.html">Register Here</a></p>
+                        <p>Already a user, <a href="index.html">Login</a></p>
                     </div>
                 </div>
             </div>

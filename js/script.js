@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+import { populateCard, createCardElement } from "./viewWorkflow.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37DpmC3nPdmkAGbbQiM3PqsoWfk9Djyg",
@@ -35,26 +36,46 @@ document.getElementById('updateCardButton').addEventListener('click', async func
     try {
         const cardContainer = document.getElementById('workflowContainer');
         const cards = cardContainer.querySelectorAll('.custom-card');
+        // console.log(sessionStorage.getItem("email"));
 
         for (let i = 0; i < cards.length; i++) {
+            const topic = document.getElementById("topic").value;
             const cardId = i + 1;
             const cardTitleInput = document.getElementById('cardTitleInput' + cardId);
             const cardMessageInput = document.getElementById('cardMessageInput' + cardId);
             const dropdownMenuButton = document.getElementById('dropdownMenuButton' + cardId);
-            const badgeNumber = cardId
+            const badgeNumber = cardId;
 
             const cardTitle = cardTitleInput.value;
             const cardMessage = cardMessageInput.value;
             const selectedEmail = dropdownMenuButton.textContent;
 
-            await addDoc(collection(db, 'cards'), {
-                badge: badgeNumber,
-                title: cardTitle,
-                message: cardMessage,
-                email: selectedEmail,
-                approved: false,
-            });
+            if (badgeNumber==1) {
+                await addDoc(collection(db, 'cards'), {
+                    topic: topic,
+                    level: badgeNumber,
+                    title: cardTitle,
+                    message: cardMessage,
+                    email: selectedEmail,
+                    approved: false,
+                    author: sessionStorage.getItem("email"),
+                    previous_level: true
+                });
+            } else {
+                await addDoc(collection(db, 'cards'), {
+                    topic: topic,
+                    level: badgeNumber,
+                    title: cardTitle,
+                    message: cardMessage,
+                    email: selectedEmail,
+                    approved: false,
+                    author: sessionStorage.getItem("email"),
+                    previous_level: false
+                });
+            }
         }
+        populateCard();
+        alert("Data sent for approval");
         console.log('All cards updated in Firestore');
     } catch (e) {
         console.error('Error updating cards: ', e);
@@ -64,7 +85,7 @@ document.getElementById('updateCardButton').addEventListener('click', async func
 // Function to create a new card
 function createCard() {
     var cardContainer = document.getElementById('workflowContainer');
-    var cardCount = cardContainer.children.length + 1; // Increment card count
+    var cardCount = cardContainer.children.length; // Increment card count
     var newCard = document.createElement('div');
     newCard.classList.add('card', 'border-dark', 'mb-3', 'custom-card');
     newCard.id = 'card' + cardCount;
@@ -74,6 +95,7 @@ function createCard() {
     var cardBadge = document.createElement('span');
     cardBadge.classList.add('badge', 'bg-primary');
     cardBadge.textContent = cardCount;
+    cardBadge.style.fontSize = 'larger';
     cardHeader.appendChild(cardBadge);
 
     var headerContent = document.createElement('div');
