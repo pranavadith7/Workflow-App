@@ -1,3 +1,12 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const email = sessionStorage.getItem('email');
+    const timestamp = sessionStorage.getItem('timestamp');
+    var time_difference = (Date.now() - timestamp)/1000;
+    if (!email || time_difference>120) {
+        window.location.href = 'index.html';
+    }
+});
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 import { populateCard, createCardElement } from "./viewWorkflow.js";
@@ -16,7 +25,7 @@ const db = getFirestore(app);
 
 // Function to populate the dropdown with user IDs
 async function populateDropdown(dropdownId) {
-    const usersRef = collection(db, 'users');
+    const usersRef = collection(db, 'register');
     const snapshot = await getDocs(usersRef);
     const dropdownMenu = document.getElementById(dropdownId);
 
@@ -152,6 +161,16 @@ function createCard() {
     populateDropdown('emailDropdown' + cardCount);
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutButton = document.getElementById('submit');
+
+    logoutButton.addEventListener('click', () => {
+        sessionStorage.removeItem("email");
+        sessionStorage.removeItem("timestamp");
+        // Redirect to index.html
+        window.location.href = 'index.html';
+    });
+});
 
 // Add card button event listener
 document.getElementById('addCardButton').addEventListener('click', function () {

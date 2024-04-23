@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, updateDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37DpmC3nPdmkAGbbQiM3PqsoWfk9Djyg",
@@ -40,18 +40,17 @@ async function getPreviousLevelDoc(topic, level) {
     return null; // Return null if no document found
 }
 
-
 // Function to create a card element with approve and reject buttons
 function createCardElement(cardId, cardData) {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card', 'border', 'p-3');
 
     // Display card data fields
-    const titleElement = document.createElement('h6');
+    const titleElement = document.createElement('p');
     titleElement.classList.add('card-title');
     titleElement.textContent = 'Title: ' + cardData.title;
-    const topicElement = document.createElement('p');
-    topicElement.classList.add('card-id');
+    const topicElement = document.createElement('h6');
+    topicElement.classList.add('card-id', 'fw-bold');
     topicElement.textContent = 'Topic: ' + cardData.topic;
     const messageElement = document.createElement('p');
     messageElement.classList.add('card-text');
@@ -95,9 +94,9 @@ function createCardElement(cardId, cardData) {
     buttonContainer.appendChild(rejectButton);
 
     // Append elements to card div
+    cardDiv.appendChild(topicElement);
     cardDiv.appendChild(titleElement);
     cardDiv.appendChild(messageElement);
-    cardDiv.appendChild(topicElement);
     cardDiv.appendChild(emailElement);
     cardDiv.appendChild(approvedElement);
     cardDiv.appendChild(buttonContainer);

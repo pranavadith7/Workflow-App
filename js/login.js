@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDoc, doc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37DpmC3nPdmkAGbbQiM3PqsoWfk9Djyg",
@@ -22,20 +22,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = loginForm.email.value;
         const password = loginForm.password.value;
 
-        // Store email in session storage
-        sessionStorage.setItem('email', email);
+        const registerDoc = doc(db, 'register', email);
+        const registerSnapshot = await getDoc(registerDoc);
 
-        try {
-            await addDoc(collection(db, "login"), {
-                email,
-                password,
-                timestamp: new Date().toLocaleString()
-            })
+        if (registerSnapshot.exists()) {
+            const registerData = registerSnapshot.data();
+            if (password === registerData.password) {
+                sessionStorage.setItem('email', email);
+                sessionStorage.setItem('timestamp', Date.now());
 
-            // Redirect to home page (replace 'home.html' with your actual home page URL)
-            window.location.href = 'home.html';
-        } catch (error) {
-            console.error('Error adding document: ', error);
+                try {
+                    await addDoc(collection(db, 'login'), {
+                        email,
+                        password,
+                        timestamp: new Date().toLocaleString()
+                    });
+                    window.location.href = 'home.html';
+                } catch (error) {
+                    console.error('Error adding document to login collection: ', error);
+                }
+            } else {
+                alert('Wrong password');
+                loginForm.reset(); // Reset form fields on wrong password
+            }
+        } else {
+            alert('Wrong email address');
+            loginForm.reset(); // Reset form fields on wrong email address
         }
     });
 });
