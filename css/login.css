@@ -57,6 +57,7 @@ form{
 	outline:none;
 	margin:1.5em auto;
 	transition: all .5s ease;
+	padding-right: 30px;
 }
 .form__input:focus{
 	border-bottom-color: #FFCC80;
@@ -82,4 +83,16 @@ form{
 
 .login{
     font-weight: bolder;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group-addon {
+    position: relative;
+    cursor: pointer;
+	border: none;
+	background-color: white;
+	padding: 0;
 }

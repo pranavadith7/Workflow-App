@@ -33,8 +33,15 @@
                                     required>
                             </div>
                             <div class="row">
-                                <input type="password" name="password" id="password" class="form__input"
-                                    placeholder="Password" required>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="password" class="form__input"
+                                        placeholder="Password" required>
+                                    <div class="input-group-addon">
+                                        <span class="toggle-password">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <input type="submit" value="Submit" class="btn">
@@ -48,6 +55,14 @@
             </div>
         </div>
     </div>
+    <script type="module">
+        import { togglePasswordVisibility } from './js/login.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const passwordIcon = document.querySelector('.toggle-password');
+            passwordIcon.addEventListener('click', togglePasswordVisibility);
+        });
+    </script>
 </body>
 
 </html>
