@@ -13,15 +13,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Function to fetch data from Firestore and populate the card dynamically
 async function populateCard() {
     const cardsContainer = document.getElementById('viewWorkflowContainer');
     document.getElementById("viewWorkflowContainer").innerHTML = '';
 
-    // Fetch data from Firestore and order by the 'level' field in ascending order
     const querySnapshot = await getDocs(query(collection(db, 'cards'), where('author', '==', sessionStorage.getItem("email")), orderBy('level', 'asc')));
 
-    // Loop through the documents and create card elements dynamically
     querySnapshot.forEach((doc) => {
         const cardData = doc.data();
         const cardId = doc.id;
@@ -30,15 +27,12 @@ async function populateCard() {
     });
 }
 
-// Function to create a card element
 function createCardElement(cardId, cardData) {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card', 'mb-3', 'custom-card');
 
-    // Set border color based on 'approved' field
     cardDiv.style.border = cardData.approved ? '2px solid green' : '2px solid red';
 
-    // Card header
     const cardHeader = document.createElement('div');
     cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'align-items-center');
 
@@ -65,11 +59,11 @@ function createCardElement(cardId, cardData) {
 
     const titleElement = document.createElement('h5');
     titleElement.classList.add('card-title');
-    titleElement.textContent = cardData.title; // Assuming "title" is a field in your Firestore document
+    titleElement.textContent = cardData.title;
 
     const messageElement = document.createElement('p');
     messageElement.classList.add('card-text');
-    messageElement.textContent = cardData.message; // Assuming "message" is a field in your Firestore document
+    messageElement.textContent = cardData.message;
 
     cardBody.appendChild(titleElement);
     cardBody.appendChild(messageElement);

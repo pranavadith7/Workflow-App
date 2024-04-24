@@ -17,14 +17,12 @@ async function renderCards() {
     const cardsContainer = document.getElementById('cardsContainer');
     cardsContainer.innerHTML = '';
 
-    // Get all documents from the "cards" collection where email matches
     const snapshot = await getDocs(query(collection(db, 'cards'), where('email', '==', sessionStorage.getItem("email"))));
 
     snapshot.forEach(async (doc) => {
         const cardData = doc.data();
         const previousLevelDoc = await getPreviousLevelDoc(cardData.topic, cardData.level - 1);
         
-        // Check if previous level exists and is approved
         if ((previousLevelDoc && previousLevelDoc.data().approved) || cardData.level==1) {
             const card = createCardElement(doc.id, cardData);
             cardsContainer.appendChild(card);
@@ -35,12 +33,11 @@ async function renderCards() {
 async function getPreviousLevelDoc(topic, level) {
     const querySnapshot = await getDocs(query(collection(db, 'cards'), where('topic', '==', topic), where('level', '==', level)));
     if (!querySnapshot.empty) {
-        return querySnapshot.docs[0]; // Return the first document found
+        return querySnapshot.docs[0];
     }
-    return null; // Return null if no document found
+    return null;
 }
 
-// Function to create a card element with approve and reject buttons
 function createCardElement(cardId, cardData) {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card', 'border', 'p-3');

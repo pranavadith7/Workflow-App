@@ -43,11 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 alert('Wrong password');
-                loginForm.reset(); // Reset form fields on wrong password
+                loginForm.reset();
             }
         } else {
             alert('Wrong email address');
-            loginForm.reset(); // Reset form fields on wrong email address
+            loginForm.reset();
         }
     });
 });

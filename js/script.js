@@ -23,7 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Function to populate the dropdown with user IDs
 async function populateDropdown(dropdownId) {
     const usersRef = collection(db, 'register');
     const snapshot = await getDocs(usersRef);
@@ -32,7 +31,7 @@ async function populateDropdown(dropdownId) {
     snapshot.forEach((doc) => {
         var dropdownItem = document.createElement('li');
         dropdownItem.classList.add('dropdown-item');
-        dropdownItem.textContent = doc.id; // Use the document ID as the dropdown item
+        dropdownItem.textContent = doc.id;
         dropdownItem.addEventListener('click', function () {
             document.getElementById(dropdownId).previousElementSibling.textContent = doc.id;
         });
@@ -40,12 +39,10 @@ async function populateDropdown(dropdownId) {
     });
 }
 
-// Update card button event listener
 document.getElementById('updateCardButton').addEventListener('click', async function () {
     try {
         const cardContainer = document.getElementById('workflowContainer');
         const cards = cardContainer.querySelectorAll('.custom-card');
-        // console.log(sessionStorage.getItem("email"));
 
         for (let i = 0; i < cards.length; i++) {
             const topic = document.getElementById("topic").value;
@@ -157,7 +154,6 @@ function createCard() {
     newCard.appendChild(cardBody);
     cardContainer.appendChild(newCard);
 
-    // Populate the dropdown menu with user IDs for the new card
     populateDropdown('emailDropdown' + cardCount);
 }
 
@@ -167,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutButton.addEventListener('click', () => {
         sessionStorage.removeItem("email");
         sessionStorage.removeItem("timestamp");
-        // Redirect to index.html
+        
         window.location.href = 'index.html';
     });
 });
