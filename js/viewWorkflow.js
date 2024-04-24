@@ -81,13 +81,12 @@ function createCardElement(cardId, cardData) {
 }
 
 async function populateTopicDropdown() {
-    const topicsRef = collection(db, 'cards');
-    const snapshot = await getDocs(topicsRef);
+    const topicsRef = await getDocs(query(collection(db, 'cards'), where("author", "==", sessionStorage.getItem("email"))));
     const dropdownMenu = document.getElementById('topicDropdown');
 
     const uniqueTopics = new Set();
 
-    snapshot.forEach((doc) => {
+    topicsRef.forEach((doc) => {
         const topic = doc.data().topic;
         uniqueTopics.add(topic);
     });
@@ -105,7 +104,6 @@ async function populateTopicDropdown() {
         dropdownMenu.appendChild(dropdownItem);
     });
 }
-
 
 populateTopicDropdown();
 
