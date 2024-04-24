@@ -83,3 +83,15 @@ form{
 .register{
     font-weight: bolder;
 }
+
+.input-group {
+    position: relative;
+}
+
+.input-group-addon {
+    position: relative;
+    cursor: pointer;
+	border: none;
+	background-color: white;
+	padding: 0;
+}

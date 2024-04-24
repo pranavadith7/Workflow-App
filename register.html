@@ -31,13 +31,34 @@
                                 <input type="email" name="email" id="email" class="form__input" placeholder="E-mail"
                                     required>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <input type="password" name="password" id="password" class="form__input"
                                     placeholder="Password" required>
                             </div>
                             <div class="row">
                                 <input type="password" name="confirm" id="confirm" class="form__input"
                                     placeholder="Confirm Password" required>
+                            </div> -->
+                            <div class="row">
+                                <div class="input-group">
+                                    <input type="password" name="password" id="password" class="form__input"
+                                        placeholder="Password" required>
+                                    <div class="input-group-addon">
+                                        <span class="toggle-password">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div><div class="row">
+                                <div class="input-group">
+                                    <input type="password" name="confirm" id="confirm" class="form__input"
+                                        placeholder="Confirm Password" required>
+                                    <div class="input-group-addon">
+                                        <span class="toggle-confirm-password">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <input type="submit" value="Submit" class="btn">
@@ -52,6 +73,19 @@
         </div>
     </div>
     <script type="module" src="js/register.js"></script>
+    <script type="module">
+        import { togglePasswordVisibility, toggleConfirmPasswordVisibility } from './js/register.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const passwordIcon = document.querySelector('.toggle-password');
+            passwordIcon.addEventListener('click', togglePasswordVisibility);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const passwordIcon = document.querySelector('.toggle-confirm-password');
+            passwordIcon.addEventListener('click', toggleConfirmPasswordVisibility);
+        });
+    </script>
 </body>
 
 </html>
