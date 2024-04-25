@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     const email = sessionStorage.getItem('email');
     const timestamp = sessionStorage.getItem('timestamp');
-    var time_difference = (Date.now() - timestamp)/1000;
-    if (!email || time_difference>120) {
-        window.location.href = 'index.html';
-    }
+    var time_difference = (Date.now() - timestamp) / 1000;
+    // if (!email || time_difference>120) {
+    //     window.location.href = 'index.html';
+    // }
 });
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
-import { populateCard, createCardElement } from "./viewWorkflow.js";
+import { populateCard, createCardElement, populateTopicDropdown } from "./viewWorkflow.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37DpmC3nPdmkAGbbQiM3PqsoWfk9Djyg",
@@ -23,20 +23,63 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function populateDropdown(dropdownId) {
-    const usersRef = collection(db, 'register');
-    const snapshot = await getDocs(usersRef);
-    const dropdownMenu = document.getElementById(dropdownId);
+document.addEventListener('DOMContentLoaded', () => {
+    const reviewerInput = document.getElementById('reviewerInput1');
+    const emailSuggestions = document.getElementById('emailSuggestions');
 
-    snapshot.forEach((doc) => {
-        var dropdownItem = document.createElement('li');
+    reviewerInput.addEventListener('input', async (e) => {
+        const searchQuery = e.target.value.trim().toLowerCase();
+        if (searchQuery.length === 0) {
+            emailSuggestions.innerHTML = '';
+            return;
+        }
+
+        try {
+            const suggestedEmails = await fetchEmailSuggestions(searchQuery);
+            displayEmailSuggestions(suggestedEmails);
+        } catch (error) {
+            console.error('Error fetching email suggestions:', error);
+        }
+    });
+});
+
+async function fetchEmailSuggestions(query) {
+    const snapshot = await getDocs(collection(db, 'register'));
+
+    const suggestedEmails = [];
+    snapshot.forEach(doc => {
+        const email = doc.id.toLowerCase();
+        if (email.includes(query)) {
+            suggestedEmails.push(email);
+        }
+    });
+    return suggestedEmails;
+}
+
+function displayEmailSuggestions(suggestions) {
+    const emailSuggestions = document.getElementById('emailSuggestions');
+    emailSuggestions.innerHTML = '';
+    if (suggestions.length === 0) {
+        emailSuggestions.innerHTML = '<p>No matching emails found</p>';
+        return;
+    }
+
+    const dropdownMenu = document.createElement('div');
+    dropdownMenu.classList.add('dropdown-menu', 'show');
+
+    suggestions.forEach(email => {
+        const dropdownItem = document.createElement('button');
         dropdownItem.classList.add('dropdown-item');
-        dropdownItem.textContent = doc.id;
-        dropdownItem.addEventListener('click', function () {
-            document.getElementById(dropdownId).previousElementSibling.textContent = doc.id;
+        dropdownItem.type = 'button';
+        dropdownItem.textContent = email;
+        dropdownItem.addEventListener('click', () => {
+            document.getElementById('reviewerInput1').value = email;
+            emailSuggestions.innerHTML = '';
         });
         dropdownMenu.appendChild(dropdownItem);
     });
+
+    emailSuggestions.appendChild(dropdownMenu);
 }
 
 document.getElementById('updateCardButton').addEventListener('click', async function () {
@@ -49,14 +92,14 @@ document.getElementById('updateCardButton').addEventListener('click', async func
             const cardId = i + 1;
             const cardTitleInput = document.getElementById('cardTitleInput' + cardId);
             const cardMessageInput = document.getElementById('cardMessageInput' + cardId);
-            const dropdownMenuButton = document.getElementById('dropdownMenuButton' + cardId);
+            const dropdownMenuButton = document.getElementById('reviewerInput' + cardId);
             const badgeNumber = cardId;
 
             const cardTitle = cardTitleInput.value;
             const cardMessage = cardMessageInput.value;
-            const selectedEmail = dropdownMenuButton.textContent;
+            const selectedEmail = dropdownMenuButton.value;
 
-            if (badgeNumber==1) {
+            if (badgeNumber == 1) {
                 await addDoc(collection(db, 'cards'), {
                     topic: topic,
                     level: badgeNumber,
@@ -81,6 +124,8 @@ document.getElementById('updateCardButton').addEventListener('click', async func
             }
         }
         populateCard();
+        populateTopicDropdown();
+        clearAllCards();
         alert("Data sent for approval");
         console.log('All cards updated in Firestore');
     } catch (e) {
@@ -88,10 +133,28 @@ document.getElementById('updateCardButton').addEventListener('click', async func
     }
 });
 
-// Function to create a new card
+function clearAllCards() {
+    const cardContainer = document.getElementById('workflowContainer');
+    const cards = cardContainer.querySelectorAll('.custom-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        const cardId = i + 1;
+        if (cardId !== 1) {
+            const cardToRemove = document.getElementById('card' + cardId);
+            cardContainer.removeChild(cardToRemove);
+        }
+    }
+
+    // Clear input fields for card 1 and topic
+    document.getElementById('topic').value = '';
+    document.getElementById('reviewerInput1').value = '';
+    document.getElementById('cardTitleInput1').value = '';
+    document.getElementById('cardMessageInput1').value = '';
+}
+
 function createCard() {
     var cardContainer = document.getElementById('workflowContainer');
-    var cardCount = cardContainer.children.length; // Increment card count
+    var cardCount = cardContainer.children.length;
     var newCard = document.createElement('div');
     newCard.classList.add('card', 'border-dark', 'mb-3', 'custom-card');
     newCard.id = 'card' + cardCount;
@@ -105,32 +168,29 @@ function createCard() {
     cardHeader.appendChild(cardBadge);
 
     var headerContent = document.createElement('div');
-    headerContent.classList.add('d-flex', 'align-items-center'); // Flex container for label and dropdown
+    headerContent.classList.add('d-flex', 'align-items-center');
     var reviewerLabel = document.createElement('label');
-    reviewerLabel.setAttribute('for', 'dropdownMenuButton' + cardCount);
+    reviewerLabel.setAttribute('for', 'reviewerInput' + cardCount);
     reviewerLabel.classList.add('form-label', 'me-2');
     reviewerLabel.textContent = 'Reviewer:';
     reviewerLabel.style.fontWeight = 'bold';
     headerContent.appendChild(reviewerLabel);
 
-    var dropdownDiv = document.createElement('div');
-    dropdownDiv.classList.add('dropdown', 'd-inline-block');
-    var dropdownButton = document.createElement('button');
-    dropdownButton.classList.add('btn', 'btn-secondary', 'dropdown-toggle');
-    dropdownButton.setAttribute('type', 'button');
-    dropdownButton.setAttribute('id', 'dropdownMenuButton' + cardCount);
-    dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
-    dropdownButton.setAttribute('aria-expanded', 'false');
-    dropdownButton.textContent = 'Select Email';
-    dropdownDiv.appendChild(dropdownButton);
+    var reviewerInput = document.createElement('input');
+    reviewerInput.type = 'text';
+    reviewerInput.id = 'reviewerInput' + cardCount;
+    reviewerInput.classList.add('form-control');
+    reviewerInput.setAttribute('placeholder', 'Type to search email');
+    reviewerInput.setAttribute('autocomplete', 'off');
+    reviewerInput.setAttribute('data-cardid', cardCount);
+    headerContent.appendChild(reviewerInput);
 
-    var dropdownMenu = document.createElement('ul');
-    dropdownMenu.classList.add('dropdown-menu');
-    dropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton' + cardCount);
+    var dropdownMenu = document.createElement('div');
+    dropdownMenu.classList.add('dropdown-menu', 'show', 'position-absolute', 'w-100');
     dropdownMenu.id = 'emailDropdown' + cardCount;
-    dropdownDiv.appendChild(dropdownMenu);
+    dropdownMenu.style.display = 'none';
 
-    headerContent.appendChild(dropdownDiv);
+    headerContent.appendChild(dropdownMenu);
     cardHeader.appendChild(headerContent);
 
     var cardBody = document.createElement('div');
@@ -154,7 +214,44 @@ function createCard() {
     newCard.appendChild(cardBody);
     cardContainer.appendChild(newCard);
 
-    populateDropdown('emailDropdown' + cardCount);
+    reviewerInput.addEventListener('input', async (e) => {
+        const cardId = e.target.getAttribute('data-cardid');
+        const searchQuery = e.target.value.trim().toLowerCase();
+        if (searchQuery.length === 0) {
+            document.getElementById('emailDropdown' + cardId).style.display = 'none';
+            return;
+        }
+
+        try {
+            const suggestedEmails = await fetchEmailSuggestions(searchQuery);
+            displayNewCardEmailSuggestions(cardId, suggestedEmails);
+        } catch (error) {
+            console.error('Error fetching email suggestions:', error);
+        }
+    });
+}
+
+function displayNewCardEmailSuggestions(cardId, suggestions) {
+    const dropdownMenu = document.getElementById('emailDropdown' + cardId);
+    dropdownMenu.innerHTML = '';
+    if (suggestions.length === 0) {
+        dropdownMenu.style.display = 'none';
+        return;
+    }
+
+    suggestions.forEach(email => {
+        const dropdownItem = document.createElement('button');
+        dropdownItem.classList.add('dropdown-item');
+        dropdownItem.type = 'button';
+        dropdownItem.textContent = email;
+        dropdownItem.addEventListener('click', () => {
+            document.getElementById('reviewerInput' + cardId).value = email;
+            dropdownMenu.style.display = 'none';
+        });
+        dropdownMenu.appendChild(dropdownItem);
+    });
+
+    dropdownMenu.style.display = 'block';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -163,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutButton.addEventListener('click', () => {
         sessionStorage.removeItem("email");
         sessionStorage.removeItem("timestamp");
-        
+
         window.location.href = 'index.html';
     });
 });
@@ -172,6 +269,3 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('addCardButton').addEventListener('click', function () {
     createCard();
 });
-
-// Populate the dropdown menu with user IDs for the initial card
-populateDropdown('emailDropdown1');

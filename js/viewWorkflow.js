@@ -17,7 +17,9 @@ async function populateCard() {
     const cardsContainer = document.getElementById('viewWorkflowContainer');
     document.getElementById("viewWorkflowContainer").innerHTML = '';
 
-    const querySnapshot = await getDocs(query(collection(db, 'cards'), where('author', '==', sessionStorage.getItem("email")), orderBy('level', 'asc')));
+    const topic = document.getElementById("topicDropdownMenuButton").textContent.trim();
+
+    const querySnapshot = await getDocs(query(collection(db, 'cards'), where('author', '==', sessionStorage.getItem("email")), where('topic', '==', topic), orderBy('level', 'asc')));
 
     querySnapshot.forEach((doc) => {
         const cardData = doc.data();
@@ -47,13 +49,14 @@ function createCardElement(cardId, cardData) {
 
     const emailElement = document.createElement('p');
     emailElement.classList.add('card-text');
+    emailElement.style.overflow = 'auto';
+    emailElement.style.whiteSpace = 'nowrap';
     emailElement.textContent = cardData.email; // Display email field from Firestore
 
     cardHeader.appendChild(badgeSpan);
     cardHeader.appendChild(reviewerLabel);
     cardHeader.appendChild(emailElement);
 
-    // Card body
     const cardBody = document.createElement('div');
     cardBody.classList.add('card-body');
 
@@ -101,4 +104,4 @@ async function populateTopicDropdown() {
 
 populateTopicDropdown();
 
-export {populateCard, createCardElement};
+export {populateCard, createCardElement, populateTopicDropdown};
