@@ -19,6 +19,10 @@ async function renderCards() {
 
     const snapshot = await getDocs(query(collection(db, 'cards'), where('email', '==', sessionStorage.getItem("email"))));
 
+    if(snapshot.size===0){
+        cardsContainer.innerHTML = 'No pending reviews';
+    }
+
     snapshot.forEach(async (doc) => {
         const cardData = doc.data();
         const previousLevelDoc = await getPreviousLevelDoc(cardData.topic, cardData.level - 1);
