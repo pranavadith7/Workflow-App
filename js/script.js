@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const timestamp = sessionStorage.getItem('timestamp');
     var time_difference = (Date.now() - timestamp) / 1000;
     if (!email || time_difference>300) {
+        sessionStorage.removeItem('email');
+        sessionStorage.removeItem('timestamp');
         window.location.href = 'index.html';
     }
 });
