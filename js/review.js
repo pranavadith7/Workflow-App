@@ -107,3 +107,5 @@ function createCardElement(cardId, cardData) {
 
 // Render cards on page load
 renderCards();
+
+export {renderCards};

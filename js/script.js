@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 import { populateCard, createCardElement, populateTopicDropdown } from "./viewWorkflow.js";
+import { renderCards } from "./review.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37DpmC3nPdmkAGbbQiM3PqsoWfk9Djyg",
@@ -125,6 +126,7 @@ document.getElementById('updateCardButton').addEventListener('click', async func
         }
         populateCard();
         populateTopicDropdown();
+        renderCards();
         clearAllCards();
         alert("Data sent for approval");
         console.log('All cards updated in Firestore');
