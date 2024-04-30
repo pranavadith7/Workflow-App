@@ -88,7 +88,12 @@ async function populateTopicDropdown() {
         uniqueTopics.add(topic);
     });
 
-    dropdownMenu.innerHTML = '';
+    if (uniqueTopics.size === 0) {
+        dropdownMenu.innerHTML = 'No flows found';
+    }
+    else {
+        dropdownMenu.innerHTML = '';
+    }
 
     uniqueTopics.forEach((topic) => {
         const dropdownItem = document.createElement('li');
@@ -104,4 +109,4 @@ async function populateTopicDropdown() {
 
 populateTopicDropdown();
 
-export {populateCard, createCardElement, populateTopicDropdown};
+export { populateCard, createCardElement, populateTopicDropdown };
