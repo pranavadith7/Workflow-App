@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = sessionStorage.getItem('email');
     const timestamp = sessionStorage.getItem('timestamp');
     var time_difference = (Date.now() - timestamp) / 1000;
-    // if (!email || time_difference>120) {
-    //     window.location.href = 'index.html';
-    // }
+    if (!email || time_difference>300) {
+        window.location.href = 'index.html';
+    }
 });
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
